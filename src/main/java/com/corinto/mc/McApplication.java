@@ -9,10 +9,15 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.corinto.mc.domain.Categoria;
 import com.corinto.mc.domain.Cidade;
+import com.corinto.mc.domain.Cliente;
+import com.corinto.mc.domain.Endereco;
 import com.corinto.mc.domain.Estado;
 import com.corinto.mc.domain.Produto;
+import com.corinto.mc.domain.enums.TipoCliente;
 import com.corinto.mc.repositories.CategoriaRepository;
 import com.corinto.mc.repositories.CidadeRepository;
+import com.corinto.mc.repositories.ClienteRepository;
+import com.corinto.mc.repositories.EnderecoRepository;
 import com.corinto.mc.repositories.EstadoRepository;
 import com.corinto.mc.repositories.ProdutoRepository;
 
@@ -27,6 +32,10 @@ public class McApplication implements CommandLineRunner{
 	private EstadoRepository estadorepository;
 	@Autowired
 	private CidadeRepository cidaderepository;
+	@Autowired
+	private ClienteRepository clienterepository;
+	@Autowired
+	private EnderecoRepository enderecorepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(McApplication.class, args);
@@ -64,7 +73,18 @@ public class McApplication implements CommandLineRunner{
 		
 		estadorepository.saveAll(Arrays.asList(est1, est2));
 		cidaderepository.saveAll(Arrays.asList(c1, c2, c3));
+	
+		Cliente cli1 = new Cliente(null, "Boris Dog", "borisdog@email.com", "66666666669", TipoCliente.PESSOAFISICA);
 		
+		cli1.getTelefones().addAll(Arrays.asList("232323232", "12345678"));
+		
+		Endereco e1 = new Endereco(null, "Rua da rua", "123", "Apto 123", "Bairro", "1234567", cli1, c1);
+		Endereco e2 = new Endereco(null, "Rua da rua2", "1233", "Sala 123", "Bairro2", "5555555", cli1, c2);
+		
+		cli1.getEnderecos().addAll(Arrays.asList(e1, e2));
+		
+		clienterepository.saveAll(Arrays.asList(cli1));
+		enderecorepository.saveAll(Arrays.asList(e1,e2));
 	}
 
 }
