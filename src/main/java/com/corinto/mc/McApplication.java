@@ -13,6 +13,7 @@ import com.corinto.mc.domain.Cidade;
 import com.corinto.mc.domain.Cliente;
 import com.corinto.mc.domain.Endereco;
 import com.corinto.mc.domain.Estado;
+import com.corinto.mc.domain.ItemPedido;
 import com.corinto.mc.domain.Pagamento;
 import com.corinto.mc.domain.PagamentoComBoleto;
 import com.corinto.mc.domain.PagamentoComCartao;
@@ -25,6 +26,7 @@ import com.corinto.mc.repositories.CidadeRepository;
 import com.corinto.mc.repositories.ClienteRepository;
 import com.corinto.mc.repositories.EnderecoRepository;
 import com.corinto.mc.repositories.EstadoRepository;
+import com.corinto.mc.repositories.ItemPedidoRepository;
 import com.corinto.mc.repositories.PagamentoRepository;
 import com.corinto.mc.repositories.PedidoRepository;
 import com.corinto.mc.repositories.ProdutoRepository;
@@ -48,6 +50,9 @@ public class McApplication implements CommandLineRunner {
 	private PedidoRepository pedidoRepository;
 	@Autowired
 	private PagamentoRepository pagamentoRepository;
+	@Autowired
+	private ItemPedidoRepository itemPedidoRepository;
+
 
 	public static void main(String[] args) {
 		SpringApplication.run(McApplication.class, args);
@@ -59,9 +64,9 @@ public class McApplication implements CommandLineRunner {
 		Categoria cat1 = new Categoria(null, "informatica");
 		Categoria cat2 = new Categoria(null, "escritorio");
 
-		Produto p1 = new Produto(null, "produto1", 2000.00);
-		Produto p2 = new Produto(null, "produto2", 3000.00);
-		Produto p3 = new Produto(null, "produto3", 4000.00);
+		Produto p1 = new Produto(null, "Computador", 2000.00);
+		Produto p2 = new Produto(null, "Impressora", 800.00);
+		Produto p3 = new Produto(null, "Mouse", 80.00);
 
 		cat1.getProdutos().addAll(Arrays.asList(p1, p2, p3));
 		cat2.getProdutos().addAll(Arrays.asList(p2));
@@ -103,14 +108,29 @@ public class McApplication implements CommandLineRunner {
 		Pedido ped1 = new Pedido(null, sdf.parse("30/09/2017 10:32"), cli1, e1);
 		Pedido ped2 = new Pedido(null, sdf.parse("10/10/2017 19:35"), cli1, e2);
 		cli1.getPedidos().addAll(Arrays.asList(ped1, ped2));
+		
 		Pagamento pagto1 = new PagamentoComCartao(null, EstadoPagamento.QUITADO, ped1, 6);
 		ped1.setPagamento(pagto1);
+		
 		Pagamento pagto2 = new PagamentoComBoleto(null, EstadoPagamento.PENDENTE, ped2, sdf.parse("20/10/2017 00:00"),
 				null);
 		ped2.setPagamento(pagto2);
+		
 		pedidoRepository.saveAll(Arrays.asList(ped1, ped2));
 		pagamentoRepository.saveAll(Arrays.asList(pagto1, pagto2));
 
+		ItemPedido ip1 = new ItemPedido(ped1, p1, 0.00, 1, 2000.00);
+		ItemPedido ip2 = new ItemPedido(ped1, p3, 0.00, 2, 80.00);
+		ItemPedido ip3 = new ItemPedido(ped2, p2, 100.00, 1, 800.00);
+		
+		ped1.getItens().addAll(Arrays.asList(ip1, ip2));
+		ped2.getItens().addAll(Arrays.asList(ip3));
+		
+		p1.getItens().addAll(Arrays.asList(ip1));
+		p2.getItens().addAll(Arrays.asList(ip3));
+		p3.getItens().addAll(Arrays.asList(ip2));
+	
+		itemPedidoRepository.saveAll(Arrays.asList(ip1, ip2, ip3));
 	}
 
 }
