@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 import com.corinto.mc.services.DBService;
+import com.corinto.mc.services.EmailService;
+import com.corinto.mc.services.SmtpEmailService;
 
 
 @Configuration
@@ -31,4 +33,8 @@ public class DevConfig {
 		return true;
 	}
 	
+	@Bean
+	public EmailService emailService() {
+		return new SmtpEmailService();
+	}
 }
