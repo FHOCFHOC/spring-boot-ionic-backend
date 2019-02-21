@@ -20,6 +20,7 @@ import com.corinto.mc.domain.PagamentoComCartao;
 import com.corinto.mc.domain.Pedido;
 import com.corinto.mc.domain.Produto;
 import com.corinto.mc.domain.enums.EstadoPagamento;
+import com.corinto.mc.domain.enums.Perfil;
 import com.corinto.mc.domain.enums.TipoCliente;
 import com.corinto.mc.repositories.CategoriaRepository;
 import com.corinto.mc.repositories.CidadeRepository;
@@ -113,18 +114,24 @@ public class DBService {
 		estadoRepository.saveAll(Arrays.asList(est1, est2));
 		cidadeRepository.saveAll(Arrays.asList(c1, c2, c3));
 
-		Cliente cli1 = new Cliente(null, "Boris Dog", "backintheusa@gmail.com", "66666666669",
+		Cliente cli1 = new Cliente(null, "Boris Dog", "borisdog@email.com", "66666666660",
 				TipoCliente.PESSOAFISICA, pe.encode("123"));
-
 		cli1.getTelefones().addAll(Arrays.asList("232323232", "12345678"));
 
+		Cliente cli2 = new Cliente(null, "Carles Dogg", "emailcarles@email.com", "11116666661",
+				TipoCliente.PESSOAFISICA, pe.encode("123"));
+		cli1.getTelefones().addAll(Arrays.asList("442323232", "44445678"));
+		cli2.addPerfil(Perfil.ADMIN);
+		
 		Endereco e1 = new Endereco(null, "Rua da rua", "123", "Apto 123", "Bairro", "1234567", cli1, c1);
 		Endereco e2 = new Endereco(null, "Rua da rua2", "1233", "Sala 123", "Bairro2", "5555555", cli1, c2);
+		Endereco e3 = new Endereco(null, "Rua das ruas4", "5533", null, "Centro ", "6666555", cli2, c2);
 
 		cli1.getEnderecos().addAll(Arrays.asList(e1, e2));
+		cli2.getEnderecos().addAll(Arrays.asList(e3));
 
-		clienteRepository.saveAll(Arrays.asList(cli1));
-		enderecoRepository.saveAll(Arrays.asList(e1, e2));
+		clienteRepository.saveAll(Arrays.asList(cli1, cli2));
+		enderecoRepository.saveAll(Arrays.asList(e1, e2, e3));
 
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
