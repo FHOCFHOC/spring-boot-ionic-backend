@@ -3,7 +3,6 @@ package com.corinto.mc.services;
 import java.util.List;
 import java.util.Optional;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -16,11 +15,14 @@ import org.springframework.transaction.annotation.Transactional;
 import com.corinto.mc.domain.Cidade;
 import com.corinto.mc.domain.Cliente;
 import com.corinto.mc.domain.Endereco;
+import com.corinto.mc.domain.enums.Perfil;
 import com.corinto.mc.domain.enums.TipoCliente;
 import com.corinto.mc.dto.ClienteDTO;
 import com.corinto.mc.dto.ClienteNewDTO;
 import com.corinto.mc.repositories.ClienteRepository;
 import com.corinto.mc.repositories.EnderecoRepository;
+import com.corinto.mc.security.UserSS;
+import com.corinto.mc.services.exceptions.AuthorizationException;
 import com.corinto.mc.services.exceptions.DataIntegrityException;
 import com.corinto.mc.services.exceptions.ObjectNotFoundException;
 
@@ -37,6 +39,12 @@ public class ClienteService {
 	private EnderecoRepository enderecoRepository;
 
 	public Cliente find(Integer id) {
+		
+		UserSS user = UserService.authenticated();
+		if (user==null || !user.hasRole(Perfil.ADMIN) && !id.equals(user.getId())) {
+			throw new AuthorizationException("Acesso negado");
+		}
+		
 		Optional<Cliente> obj = repo.findById(id);
 		return obj.orElseThrow(() -> new ObjectNotFoundException(
 				"Objeto não encontrado! Id: " + id + ", Tipo: " + Cliente.class.getName()));
